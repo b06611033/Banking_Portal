@@ -2,10 +2,11 @@ package com.eBankingPortal.repository;
 
 import com.eBankingPortal.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
+@Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    // optional class is used because user might be null(not found)
-    Optional<Transaction> findById(Long transaction_id);
+    List<Transaction> findByaccountEquals(Long account_id);
 }

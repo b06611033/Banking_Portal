@@ -1,4 +1,4 @@
-package com.eBankingPortal.dto;
+package com.eBankingPortal.Request;
 
 import lombok.Data;
 

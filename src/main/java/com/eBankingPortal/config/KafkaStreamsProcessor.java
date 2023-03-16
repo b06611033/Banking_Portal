@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.Objects;
 
-import com.eBankingPortal.dto.TransactionResponse;
-import com.eBankingPortal.dto.TransactionRequest;
+import com.eBankingPortal.Request.TransactionRequest;
+import com.eBankingPortal.Response.TransactionResponse;
 
 public class KafkaStreamsProcessor implements Processor<Long, TransactionRequest, Long, TransactionResponse> {
     private final Logger log = LoggerFactory.getLogger(KafkaStreamsProcessor.class);
@@ -28,7 +28,10 @@ public class KafkaStreamsProcessor implements Processor<Long, TransactionRequest
 
     @Override
     public void process(Record<Long, TransactionRequest> record) {
-        log.info("Streams Request to save process transactions : {}", record);
+        // int month = record.value().getMonth();
+        // int year = record.value().getYear();
+        // Long account = record.value().getAccountId();
+        log.info("process transactions : {}", record);
     }
 
     @Override

@@ -20,10 +20,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerde;
+
+import com.eBankingPortal.Response.TransactionResponse;
+
 import java.util.Properties;
 import static org.apache.kafka.streams.StreamsConfig.*;
-
-import com.eBankingPortal.dto.TransactionResponse;
 
 public class KafkaConfig {
 
@@ -41,23 +42,14 @@ public class KafkaConfig {
     @Value(value = "${kafka.streams.stateStoreName}")
     private String stateStoreName;
 
-    private final ObjectFactory<KafkaStreamsProcessor> TransactionsStreamsProcessorObjectFactory;
-
-    private final Deserializer<Long> keyDeSerializer = new LongDeserializer();
-
-    private final Deserializer<TransactionResponse> valueDeSerializer = new JsonDeserializer<>(
-            TransactionResponse.class);
-
-    private final Serde<Long> keySerializer = Serdes.Long();
-
-    private final Serde<TransactionResponse> valueSerializer = new JsonSerde<>(TransactionResponse.class);
-
-    public KafkaConfig(ObjectFactory<KafkaStreamsProcessor> trasactionsStreamsProcessorObjectFactory) {
-        TransactionsStreamsProcessorObjectFactory = trasactionsStreamsProcessorObjectFactory;
-    }
-
-    public KafkaStreamsProcessor getTransactionsStreamsProcessor() {
-        return TransactionsStreamsProcessorObjectFactory.getObject();
+    private Properties createConfigurationProperties() {
+        final Properties props = new Properties();
+        props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        props.put(APPLICATION_ID_CONFIG, applicationId);
+        props.put(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, LogAndContinueExceptionHandler.class);
+        props.put(StreamsConfig.STATE_DIR_CONFIG, "D:\\statestore");
+        props.put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 1);
+        return props;
     }
 
     @Bean
@@ -70,16 +62,25 @@ public class KafkaConfig {
         return kafkaStreams;
     }
 
-    /**
-     * This method is used for defining topology for KafkaStreams
-     * Topology:
-     * 1. read the topic
-     * 2. send to stream processor for processing the message
-     * 3. persist message to key-value State Store
-     *
-     * @param streamsBuilder new Stream Builder
-     * @return Topology
-     */
+    private final ObjectFactory<KafkaStreamsProcessor> KafkaStreamsProcessorObjectFactory;
+
+    private final Deserializer<Long> keyDeSerializer = new LongDeserializer();
+
+    private final Deserializer<TransactionResponse> valueDeSerializer = new JsonDeserializer<>(
+            TransactionResponse.class);
+
+    private final Serde<Long> keySerializer = Serdes.Long();
+
+    private final Serde<TransactionResponse> valueSerializer = new JsonSerde<>(TransactionResponse.class);
+
+    public KafkaConfig(ObjectFactory<KafkaStreamsProcessor> trasactionsStreamsProcessorObjectFactory) {
+        KafkaStreamsProcessorObjectFactory = trasactionsStreamsProcessorObjectFactory;
+    }
+
+    public KafkaStreamsProcessor getKafkaStreamsProcessor() {
+        return KafkaStreamsProcessorObjectFactory.getObject();
+    }
+
     public Topology buildTopology(StreamsBuilder streamsBuilder) {
         Topology topology = streamsBuilder.build();
 
@@ -87,23 +88,9 @@ public class KafkaConfig {
                 .keyValueStoreBuilder(Stores.persistentKeyValueStore(stateStoreName), keySerializer, valueSerializer);
 
         topology.addSource("Source", keyDeSerializer, valueDeSerializer, msgTransactionsTopic)
-                .addProcessor("Process", this::getTransactionsStreamsProcessor, "Source")
+                .addProcessor("Process", this::getKafkaStreamsProcessor, "Source")
                 .addStateStore(stateStoreBuilder, "Process");
         return topology;
     }
 
-    /**
-     * This method is used for setting the configuration of Kafka Stream
-     *
-     * @return Properties
-     */
-    private Properties createConfigurationProperties() {
-        final Properties props = new Properties();
-        props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(APPLICATION_ID_CONFIG, applicationId);
-        props.put(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, LogAndContinueExceptionHandler.class);
-        props.put(StreamsConfig.STATE_DIR_CONFIG, "D:\\statestore");
-        props.put(StreamsConfig.REPLICATION_FACTOR_CONFIG, 1);
-        return props;
-    }
 }
