@@ -1,7 +1,8 @@
 package com.eBankingPortal.mapper;
 
 import com.eBankingPortal.dto.TransactionDTO;
-import com.eBankingPortal.entity.Transaction;
+import com.eBankingPortal.models.Transaction;
+
 import org.springframework.beans.BeanUtils;
 
 public class TransactionMapper extends BaseMapper<Transaction, TransactionDTO> {

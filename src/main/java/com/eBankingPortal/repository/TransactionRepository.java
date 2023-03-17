@@ -1,8 +1,9 @@
 package com.eBankingPortal.repository;
 
-import com.eBankingPortal.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.eBankingPortal.models.Transaction;
 
 import java.util.List;
 

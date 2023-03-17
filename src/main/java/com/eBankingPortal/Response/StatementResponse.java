@@ -1,8 +1,10 @@
 package com.eBankingPortal.Response;
 
 import java.util.List;
+
+import com.eBankingPortal.models.Transaction;
+
 import java.math.BigDecimal;
-import com.eBankingPortal.entity.Transaction;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

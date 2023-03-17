@@ -1,4 +1,4 @@
-package com.eBankingPortal.entity;
+package com.eBankingPortal.models;
 
 import lombok.Getter;
 import lombok.Setter;

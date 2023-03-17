@@ -20,42 +20,45 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.eBankingPortal.entity.Customer;
 import com.eBankingPortal.config.AuthenticationConfigConstants;
+import com.eBankingPortal.models.Customer;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final AuthenticationManager authenticationManager;
+        private final AuthenticationManager authenticationManager;
 
-    // authenticate users credentials
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
-        try {
-            Customer creds = new ObjectMapper()
-                    .readValue(request.getInputStream(), Customer.class);
+        // authenticate users credentials
+        @Override
+        public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+                        throws AuthenticationException {
+                try {
+                        Customer creds = new ObjectMapper()
+                                        .readValue(request.getInputStream(), Customer.class);
 
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            creds.getUserName(),
-                            creds.getPassword(),
-                            new ArrayList<>()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                        return authenticationManager.authenticate(
+                                        new UsernamePasswordAuthenticationToken(
+                                                        creds.getUserName(),
+                                                        creds.getPassword(),
+                                                        new ArrayList<>()));
+                } catch (IOException e) {
+                        throw new RuntimeException(e);
+                }
         }
-    }
 
-    // After successful authentication, return token to user
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-            Authentication auth) throws IOException, ServletException {
-        String token = JWT.create()
-                .withSubject(((User) auth.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + AuthenticationConfigConstants.EXPIRATION_TIME))
-                .sign(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()));
-        response.addHeader(AuthenticationConfigConstants.HEADER_STRING,
-                AuthenticationConfigConstants.TOKEN_PREFIX + token);
-    }
+        // After successful authentication, return token to user
+        @Override
+        protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                        FilterChain chain,
+                        Authentication auth) throws IOException, ServletException {
+                String token = JWT.create()
+                                .withSubject(((User) auth.getPrincipal()).getUsername())
+                                .withExpiresAt(new Date(System.currentTimeMillis()
+                                                + AuthenticationConfigConstants.EXPIRATION_TIME))
+                                .sign(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()));
+                response.addHeader(AuthenticationConfigConstants.HEADER_STRING,
+                                AuthenticationConfigConstants.TOKEN_PREFIX + token);
+        }
 }

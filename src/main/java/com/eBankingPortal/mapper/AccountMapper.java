@@ -1,7 +1,8 @@
 package com.eBankingPortal.mapper;
 
 import com.eBankingPortal.dto.AccountDTO;
-import com.eBankingPortal.entity.Account;
+import com.eBankingPortal.models.Account;
+
 import org.springframework.beans.BeanUtils;
 
 public class AccountMapper extends BaseMapper<Account, AccountDTO> {

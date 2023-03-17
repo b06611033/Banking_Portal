@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import com.eBankingPortal.Request.UserCreateRequest;
+import com.eBankingPortal.models.Customer;
 import com.eBankingPortal.repository.UserRepository;
-import com.eBankingPortal.entity.Customer;
 
 @Service
 @RequiredArgsConstructor

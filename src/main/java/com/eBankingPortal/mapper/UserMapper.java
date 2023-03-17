@@ -1,7 +1,8 @@
 package com.eBankingPortal.mapper;
 
 import com.eBankingPortal.dto.UserDTO;
-import com.eBankingPortal.entity.Customer;
+import com.eBankingPortal.models.Customer;
+
 import org.springframework.beans.BeanUtils;
 
 public class UserMapper extends BaseMapper<Customer, UserDTO> {

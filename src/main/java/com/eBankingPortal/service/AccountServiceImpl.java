@@ -4,9 +4,9 @@ import com.eBankingPortal.Request.StatementRequest;
 import com.eBankingPortal.Request.TransactionRequest;
 import com.eBankingPortal.Response.StatementResponse;
 import com.eBankingPortal.Response.TransactionResponse;
+import com.eBankingPortal.models.Account;
 import com.eBankingPortal.repository.AccountRepository;
 import com.eBankingPortal.repository.TransactionRepository;
-import com.eBankingPortal.entity.Account;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
