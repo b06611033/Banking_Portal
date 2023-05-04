@@ -2,9 +2,8 @@
 ## Technologies
 1. Spring
 2. MySQL
-3. Kafka
-4. Swagger API
-5. Docker
+3. Swagger API
+4. Docker
 ## Run locally
 1. Install Maven
 2. Create MySQL Database
@@ -32,5 +31,3 @@ Handles the logic between incoming request and response
 Provides data access operations
 ### Models
 Defines Customer, Account, Transaction entity and communicates with database
-### Filter
-Provides authentication and authorization with JWT

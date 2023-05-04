@@ -1,6 +1,5 @@
 package com.eBankingPortal.service;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
@@ -12,7 +11,6 @@ import com.eBankingPortal.repository.UserRepository;
 @RequiredArgsConstructor
 public class UserServiceImpl {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
     public Customer readUserByUsername(String username) {
         // todo: Handle Exception
@@ -22,11 +20,11 @@ public class UserServiceImpl {
     public void createUser(UserCreateRequest userCreateRequest) {
         Customer user = new Customer();
         Customer checkUser = userRepository.findByuserNameEquals(userCreateRequest.getUserName());
-        if (checkUser == null) {
+        if (checkUser != null) {
             throw new RuntimeException("User already registered. Please use different username.");
         }
         user.setUserName(userCreateRequest.getUserName());
-        user.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
+        user.setPassword(userCreateRequest.getPassword());
         userRepository.save(user);
     }
 }
