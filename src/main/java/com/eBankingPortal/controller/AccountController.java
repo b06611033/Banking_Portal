@@ -20,7 +20,7 @@ import com.eBankingPortal.Response.TransactionResponse;
 import com.eBankingPortal.service.AccountServiceImpl;
 
 @RestController
-@RequestMapping("api/account") // api prefix
+@RequestMapping(path = "api/account") // api prefix
 @Api(tags = "Account api") // api documentation with swagger
 public class AccountController {
 
