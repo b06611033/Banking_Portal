@@ -13,14 +13,11 @@
 ./mvnw spring-boot:run
 ```
 
-## Run on Docker
+## Build and run on Docker
 ```
-docker build -t backend .
+docker-compose up --build
 ```
 
-```
-docker-compose up
-```
 
 ## App Structure
 ### Controller
