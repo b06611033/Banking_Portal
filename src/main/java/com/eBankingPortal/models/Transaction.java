@@ -20,22 +20,16 @@ public class Transaction {
     @Column(name = " transaction_id")
     private Long transaction_id;
 
-    @Column(name = "IBAN")
-    private String IBAN;
-
     @Column(name = "currency")
     private String currency;
 
     @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column(name = "type")
-    private String type;
-
     @Column(name = "transactionDate")
     private LocalDate transactionDate;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @Column(name = "IBAN")
+    private String IBAN;
+
 }

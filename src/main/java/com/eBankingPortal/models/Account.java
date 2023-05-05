@@ -6,7 +6,6 @@ import lombok.Setter;
 //Use JPA and hibernate to handle data between Java and MySQL database
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
 import java.time.LocalDate;
 
 // Use lombok to create getter and setter easily
@@ -34,12 +33,7 @@ public class Account {
     @Column(name = "createDate")
     private LocalDate createDate;
 
-    // Account has 1 or more transactions
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Transaction> transactions;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Customer user;
+    @Column(name = "userName")
+    private String userName;
 
 }

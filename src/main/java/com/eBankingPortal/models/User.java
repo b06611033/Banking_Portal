@@ -5,7 +5,6 @@ import lombok.Setter;
 
 //Use JPA and hibernate to handle data between Java and MySQL database
 import jakarta.persistence.*;
-import java.util.List;
 import java.time.LocalDate;
 
 // Use lombok to create getter and setter easily
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "users")
-public class Customer {
+public class User {
     // primary key
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +28,4 @@ public class Customer {
     @Column(name = "created_date")
     private LocalDate createDate;
 
-    // User has 1 or more accounts
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Account> accounts;
 }

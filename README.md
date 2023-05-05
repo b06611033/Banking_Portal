@@ -21,7 +21,7 @@ docker-compose up --build
 
 ## App Structure
 ### Controller
-Provides api to create user and get transaction statements
+Provides api endpoints
 ### Service
 Handles the logic between incoming request and response
 ### Repository

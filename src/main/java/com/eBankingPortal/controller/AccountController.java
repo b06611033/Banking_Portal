@@ -10,13 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
 
 import com.eBankingPortal.Request.StatementRequest;
-import com.eBankingPortal.Request.TransactionRequest;
 import com.eBankingPortal.Response.StatementResponse;
-import com.eBankingPortal.Response.TransactionResponse;
 import com.eBankingPortal.service.AccountServiceImpl;
 
 @RestController
@@ -31,24 +29,24 @@ public class AccountController {
     private AccountServiceImpl AccountService;
 
     // handling post request
-    @GetMapping("/transactions")
-    @ApiOperation(value = "acquire transactions", response = TransactionResponse.class, notes = "account must exist")
+    @PostMapping("/create")
+    @ApiOperation(value = "acquire statement", response = StatementResponse.class, notes = "user must exist")
     @ApiResponses({
             @ApiResponse(code = 401, message = "unauthorized request"),
             @ApiResponse(code = 404, message = "the path doesn't exist")
     })
-    public List<TransactionResponse> getTransactionsMesseage(@RequestBody TransactionRequest request) {
-        log.info("acquiring transactions");
+    public StatementResponse createAccount(@RequestBody StatementRequest request) {
+        log.info("acquiring statement");
         try {
-            List<TransactionResponse> responseList = AccountService.TransactionPage(request);
-            return responseList;
+            StatementResponse statement = AccountService.getStatement(request);
+            return statement;
         } catch (Exception e) {
-            log.info("error to acquire transactions");
+            log.info("error to acquire statement");
             return null;
         }
     }
 
-    // handling post request
+    // handling get request
     @GetMapping("/statement")
     @ApiOperation(value = "acquire statement", response = StatementResponse.class, notes = "account must exist")
     @ApiResponses({
