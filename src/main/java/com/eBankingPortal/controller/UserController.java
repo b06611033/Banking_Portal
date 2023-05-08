@@ -19,7 +19,7 @@ public class UserController {
     public String createUser(@RequestBody UserCreateRequest userCreateRequest) {
         try {
             userService.createUser(userCreateRequest);
-            return "user created successfully";
+            return "user created successfully, your userName is: " + userCreateRequest.getUserName();
         } catch (Exception e) {
             return "user already exist";
         }

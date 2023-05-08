@@ -4,9 +4,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import com.eBankingPortal.Request.AccountCreateRequest;
+import com.eBankingPortal.Request.GetAccountRequest;
 import com.eBankingPortal.Request.StatementRequest;
 import com.eBankingPortal.Response.StatementResponse;
+import com.eBankingPortal.models.Account;
 import com.eBankingPortal.service.AccountServiceImpl;
 
 @RestController
@@ -31,7 +35,7 @@ public class AccountController {
 
     // handling post request
     @PostMapping("/create")
-    @ApiOperation(value = "create account", response = StatementResponse.class, notes = "user must exist")
+    @ApiOperation(value = "create account", response = String.class, notes = "user must exist")
     @ApiResponses({
             @ApiResponse(code = 401, message = "unauthorized request"),
             @ApiResponse(code = 404, message = "the path doesn't exist")
@@ -44,6 +48,19 @@ public class AccountController {
         } catch (Exception e) {
             log.info("error to create account");
             return "IBAN repeated or user does not exist";
+        }
+    }
+
+    // handling get request
+    @GetMapping("/accounts")
+    public List<Account> getAccounts(@RequestBody GetAccountRequest request) {
+        log.info("getting all accounts of the user");
+        try {
+            List<Account> accounts = accountService.getAccounts(request);
+            return accounts;
+        } catch (Exception e) {
+            log.info("user doesn't exist");
+            return null;
         }
     }
 
