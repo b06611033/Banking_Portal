@@ -5,7 +5,7 @@ import lombok.Setter;
 
 //Use JPA and hibernate to handle data between Java and MySQL database
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 // Use lombok to create getter and setter easily
 @Getter
@@ -26,6 +26,6 @@ public class User {
     private String password;
 
     @Column(name = "created_date")
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
 }

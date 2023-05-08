@@ -21,10 +21,10 @@ docker-compose up --build
 
 ## App Structure
 ### Controller
-Provides api endpoints
+Provides api endpoint
 ### Service
 Handles the logic between incoming request and response
 ### Repository
 Provides data access operations
 ### Models
-Defines Customer, Account, Transaction entity and communicates with database
+Defines User, Account, Transaction entities and communicates with database

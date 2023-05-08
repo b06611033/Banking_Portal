@@ -2,6 +2,7 @@ package com.eBankingPortal.service;
 
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
 
 import com.eBankingPortal.Request.UserCreateRequest;
 import com.eBankingPortal.models.User;
@@ -18,8 +19,10 @@ public class UserServiceImpl {
         if (checkUser != null) {
             throw new RuntimeException("User already registered. Please use different username.");
         }
+        LocalDateTime now = LocalDateTime.now();
         user.setUserName(userCreateRequest.getUserName());
         user.setPassword(userCreateRequest.getPassword());
+        user.setCreateDate(now);
         userRepository.save(user);
     }
 }

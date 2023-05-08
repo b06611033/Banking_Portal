@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
 
+import com.eBankingPortal.Request.AccountCreateRequest;
 import com.eBankingPortal.Request.StatementRequest;
 import com.eBankingPortal.Response.StatementResponse;
 import com.eBankingPortal.service.AccountServiceImpl;
@@ -20,29 +22,28 @@ import com.eBankingPortal.service.AccountServiceImpl;
 @RestController
 @RequestMapping(path = "api/account") // api prefix
 @Api(tags = "Account api") // api documentation with swagger
+@RequiredArgsConstructor
 public class AccountController {
 
     private final Logger log = LoggerFactory.getLogger(AccountController.class);
 
-    // autowire to instantiate accountService (can only autowire Spring beans)
-    @Autowired
-    private AccountServiceImpl AccountService;
+    private final AccountServiceImpl accountService;
 
     // handling post request
     @PostMapping("/create")
-    @ApiOperation(value = "acquire statement", response = StatementResponse.class, notes = "user must exist")
+    @ApiOperation(value = "create account", response = StatementResponse.class, notes = "user must exist")
     @ApiResponses({
             @ApiResponse(code = 401, message = "unauthorized request"),
             @ApiResponse(code = 404, message = "the path doesn't exist")
     })
-    public StatementResponse createAccount(@RequestBody StatementRequest request) {
-        log.info("acquiring statement");
+    public String createAccount(@RequestBody AccountCreateRequest request) {
+        log.info("creating account");
         try {
-            StatementResponse statement = AccountService.getStatement(request);
-            return statement;
+            accountService.createAccount(request);
+            return "account created successfully";
         } catch (Exception e) {
-            log.info("error to acquire statement");
-            return null;
+            log.info("error to create account");
+            return "IBAN repeated or user does not exist";
         }
     }
 
@@ -56,7 +57,7 @@ public class AccountController {
     public StatementResponse getStatementMesseage(@RequestBody StatementRequest request) {
         log.info("acquiring statement");
         try {
-            StatementResponse statement = AccountService.getStatement(request);
+            StatementResponse statement = accountService.getStatement(request);
             return statement;
         } catch (Exception e) {
             log.info("error to acquire statement");

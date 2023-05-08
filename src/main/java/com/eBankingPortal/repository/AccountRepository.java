@@ -8,4 +8,6 @@ import com.eBankingPortal.models.Account;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
     Account findByaccountIdEquals(Long accountId);
+
+    Account findByIBANEquals(String IBAN);
 }

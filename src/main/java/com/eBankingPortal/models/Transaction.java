@@ -6,7 +6,7 @@ import lombok.Setter;
 //Use JPA and hibernate to handle data between Java and MySQL database
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 // Use lombok to create getter and setter easily
 @Getter
@@ -17,8 +17,8 @@ import java.time.LocalDate;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = " transaction_id")
-    private Long transaction_id;
+    @Column(name = " transactionId")
+    private Long transactionId;
 
     @Column(name = "currency")
     private String currency;
@@ -27,8 +27,9 @@ public class Transaction {
     private BigDecimal amount;
 
     @Column(name = "transactionDate")
-    private LocalDate transactionDate;
+    private LocalDateTime transactionDate;
 
+    // transaction belongs to account
     @Column(name = "IBAN")
     private String IBAN;
 
