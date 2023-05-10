@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class AccountCreateRequest {
-    private String userName;
-    private String currency;
-    private String iban;
+public class TransactionRequest {
+    private String fromIBAN;
+    private String toIBAN;
     private BigDecimal amount;
+
 }

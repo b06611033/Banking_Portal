@@ -19,7 +19,9 @@ import lombok.RequiredArgsConstructor;
 import com.eBankingPortal.Request.AccountCreateRequest;
 import com.eBankingPortal.Request.GetAccountRequest;
 import com.eBankingPortal.Request.StatementRequest;
+import com.eBankingPortal.Request.TransactionRequest;
 import com.eBankingPortal.Response.StatementResponse;
+import com.eBankingPortal.Response.TransactionResponse;
 import com.eBankingPortal.models.Account;
 import com.eBankingPortal.service.AccountServiceImpl;
 
@@ -46,8 +48,7 @@ public class AccountController {
             accountService.createAccount(request);
             return "account created successfully";
         } catch (Exception e) {
-            log.info("error to create account");
-            return "IBAN repeated or user does not exist";
+            return e.getMessage();
         }
     }
 
@@ -59,8 +60,26 @@ public class AccountController {
             List<Account> accounts = accountService.getAccounts(request);
             return accounts;
         } catch (Exception e) {
-            log.info("user doesn't exist");
+            log.info(e.getMessage());
             return null;
+        }
+    }
+
+    // handling post request
+    @PostMapping("/transfer")
+    @ApiOperation(value = "transfer money", response = TransactionResponse.class, notes = "both accounts must exist")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "unauthorized request"),
+            @ApiResponse(code = 404, message = "the path doesn't exist")
+    })
+    public TransactionResponse createTransaction(@RequestBody TransactionRequest request) {
+        log.info("transfering money");
+        try {
+            TransactionResponse response = accountService.handleTransaction(request);
+            return response;
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return new TransactionResponse(null, e.getMessage());
         }
     }
 
@@ -77,8 +96,8 @@ public class AccountController {
             StatementResponse statement = accountService.getStatement(request);
             return statement;
         } catch (Exception e) {
-            log.info("error to acquire statement");
-            return null;
+            log.info(e.getMessage());
+            return new StatementResponse(null, null, e.getMessage());
         }
     }
 }

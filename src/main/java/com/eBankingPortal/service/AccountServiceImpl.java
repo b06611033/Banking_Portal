@@ -3,8 +3,11 @@ package com.eBankingPortal.service;
 import com.eBankingPortal.Request.AccountCreateRequest;
 import com.eBankingPortal.Request.GetAccountRequest;
 import com.eBankingPortal.Request.StatementRequest;
+import com.eBankingPortal.Request.TransactionRequest;
 import com.eBankingPortal.Response.StatementResponse;
+import com.eBankingPortal.Response.TransactionResponse;
 import com.eBankingPortal.models.Account;
+import com.eBankingPortal.models.Transaction;
 import com.eBankingPortal.models.User;
 import com.eBankingPortal.repository.AccountRepository;
 import com.eBankingPortal.repository.TransactionRepository;
@@ -13,7 +16,7 @@ import com.eBankingPortal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.math.BigDecimal;
+import java.math.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,20 +37,15 @@ public class AccountServiceImpl {
     public void createAccount(AccountCreateRequest request) {
         log.info("AccountService creating account");
         Account account = new Account();
-        Account checkAccount = accountRepository.findByIBANEquals(request.getIBAN());
+        Account checkAccount = accountRepository.findByIBANEquals(request.getIban());
         if (checkAccount != null) {
-            throw new RuntimeException("Use a different account IBAN");
-        }
-        User checkUser = userRepository.findByuserNameEquals(request.getUserName());
-        if (checkUser == null) {
-            throw new RuntimeException("User does not exist");
+            throw new RuntimeException("Account with this IBAN already exists, IBAN should be unique");
         }
         LocalDateTime now = LocalDateTime.now();
         account.setUserName(request.getUserName());
-        account.setIBAN(request.getIBAN());
+        account.setIBAN(request.getIban());
         account.setCurrency(request.getCurrency());
-        BigDecimal balance = new BigDecimal(0);
-        account.setBalance(balance);
+        account.setBalance(request.getAmount());
         account.setCreateDate(now);
         accountRepository.save(account);
     }
@@ -63,11 +61,49 @@ public class AccountServiceImpl {
         return accounts;
     }
 
+    public TransactionResponse handleTransaction(TransactionRequest request) {
+        log.info("AccountService handling transcation");
+        Account fromAccount = accountRepository.findByIBANEquals(request.getFromIBAN());
+        Account toAccount = accountRepository.findByIBANEquals(request.getToIBAN());
+        if (toAccount == null) {
+            throw new RuntimeException("Destination account doesn't exist");
+        }
+        BigDecimal amount = request.getAmount();
+        if (fromAccount.getBalance().compareTo(amount) == -1) {
+            throw new RuntimeException("Balance is not enough to make transaction");
+        }
+        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
+        accountRepository.save(fromAccount);
+        toAccount.setBalance(toAccount.getBalance().add(amount));
+        accountRepository.save(toAccount);
+        LocalDateTime now = LocalDateTime.now();
+        Transaction fromTransaction = new Transaction();
+        fromTransaction.setAmount(amount.negate());
+        fromTransaction.setCurrency(fromAccount.getCurrency());
+        fromTransaction.setIBAN(fromAccount.getIBAN());
+        fromTransaction.setTransactionDate(now);
+        transactionRepository.save(fromTransaction);
+        Transaction toTransaction = new Transaction();
+        toTransaction.setAmount(amount);
+        toTransaction.setCurrency(toAccount.getCurrency());
+        toTransaction.setIBAN(toAccount.getIBAN());
+        toTransaction.setTransactionDate(now);
+        transactionRepository.save(toTransaction);
+
+        String message = "sent money successfully from " + fromAccount.getUserName() + " to " + toAccount.getUserName()
+                + ", your balance is as above";
+        return new TransactionResponse(fromAccount.getBalance(), message);
+    }
+
     public StatementResponse getStatement(StatementRequest request) {
         log.info("AccountService getting statement");
-        Account account = accountRepository.findByIBANEquals(request.getIBAN());
+        log.info(request.getIban());
+        Account account = accountRepository.findByIBANEquals(request.getIban());
+        if (account == null) {
+            throw new RuntimeException("Query failed, account doesn't exist");
+        }
         String IBAN = account.getIBAN();
         return new StatementResponse(account.getBalance(),
-                transactionRepository.findByIBANEquals(IBAN));
+                transactionRepository.findByIBANEquals(IBAN), "this is your statement for account: " + IBAN);
     }
 }

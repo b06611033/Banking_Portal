@@ -12,6 +12,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class StatementResponse {
-    BigDecimal balance;
-    List<Transaction> transactionHistory;
+    private BigDecimal balance;
+    private List<Transaction> transactionHistory;
+    private String message;
 }

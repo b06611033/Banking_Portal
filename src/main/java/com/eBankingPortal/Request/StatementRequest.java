@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class StatementRequest {
-    private String IBAN;
+    private String iban;
 }
