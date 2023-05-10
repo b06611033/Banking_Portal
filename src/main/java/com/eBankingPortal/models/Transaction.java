@@ -26,6 +26,9 @@ public class Transaction {
     @Column(name = "amount")
     private BigDecimal amount;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "transactionDate")
     private LocalDateTime transactionDate;
 

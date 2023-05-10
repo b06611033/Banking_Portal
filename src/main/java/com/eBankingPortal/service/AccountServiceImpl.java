@@ -78,15 +78,19 @@ public class AccountServiceImpl {
         accountRepository.save(toAccount);
         LocalDateTime now = LocalDateTime.now();
         Transaction fromTransaction = new Transaction();
+        String fromDescription = "Transfered to: " + toAccount.getIBAN();
         fromTransaction.setAmount(amount.negate());
         fromTransaction.setCurrency(fromAccount.getCurrency());
         fromTransaction.setIBAN(fromAccount.getIBAN());
+        fromTransaction.setDescription(fromDescription);
         fromTransaction.setTransactionDate(now);
         transactionRepository.save(fromTransaction);
         Transaction toTransaction = new Transaction();
+        String toDescription = "Deposited from: " + fromAccount.getIBAN();
         toTransaction.setAmount(amount);
         toTransaction.setCurrency(toAccount.getCurrency());
         toTransaction.setIBAN(toAccount.getIBAN());
+        toTransaction.setDescription(toDescription);
         toTransaction.setTransactionDate(now);
         transactionRepository.save(toTransaction);
 
