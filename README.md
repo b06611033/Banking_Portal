@@ -27,4 +27,4 @@ Handles the logic between incoming request and response
 ### Repository
 Provides data access operations
 ### Models
-Defines User, Account, Transaction entities and communicates with database
+Defines User, Account, Transaction entities
