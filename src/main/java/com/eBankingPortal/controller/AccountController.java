@@ -5,12 +5,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +21,7 @@ import com.eBankingPortal.Request.StatementRequest;
 import com.eBankingPortal.Request.TransactionRequest;
 import com.eBankingPortal.Response.StatementResponse;
 import com.eBankingPortal.Response.TransactionResponse;
-import com.eBankingPortal.models.Account;
+import com.eBankingPortal.Response.GetAccountResponse;
 import com.eBankingPortal.service.AccountServiceImpl;
 
 @RestController
@@ -33,7 +32,8 @@ public class AccountController {
 
     private final Logger log = LoggerFactory.getLogger(AccountController.class);
 
-    private final AccountServiceImpl accountService;
+    @Autowired
+    AccountServiceImpl accountService;
 
     // handling post request
     @PostMapping("/create")
@@ -54,14 +54,14 @@ public class AccountController {
 
     // handling get request
     @GetMapping("/accounts")
-    public List<Account> getAccounts(@RequestBody GetAccountRequest request) {
+    public GetAccountResponse getAccounts(@RequestBody GetAccountRequest request) {
         log.info("getting all accounts of the user");
         try {
-            List<Account> accounts = accountService.getAccounts(request);
-            return accounts;
+            GetAccountResponse response = accountService.getAccounts(request);
+            return response;
         } catch (Exception e) {
             log.info(e.getMessage());
-            return null;
+            return new GetAccountResponse(null, e.getMessage());
         }
     }
 

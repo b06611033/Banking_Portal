@@ -4,6 +4,7 @@ import com.eBankingPortal.Request.AccountCreateRequest;
 import com.eBankingPortal.Request.GetAccountRequest;
 import com.eBankingPortal.Request.StatementRequest;
 import com.eBankingPortal.Request.TransactionRequest;
+import com.eBankingPortal.Response.GetAccountResponse;
 import com.eBankingPortal.Response.StatementResponse;
 import com.eBankingPortal.Response.TransactionResponse;
 import com.eBankingPortal.models.Account;
@@ -20,23 +21,31 @@ import java.math.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl {
 
-    private final AccountRepository accountRepository;
+    @Autowired
+    UserRepository userRepository;
 
-    private final TransactionRepository transactionRepository;
+    @Autowired
+    AccountRepository accountRepository;
 
-    private final UserRepository userRepository;
+    @Autowired
+    TransactionRepository transactionRepository;
 
     private final Logger log = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     public void createAccount(AccountCreateRequest request) {
         log.info("AccountService creating account");
         Account account = new Account();
+        User checkUser = userRepository.findByuserNameEquals(request.getUserName());
+        if (checkUser == null) {
+            throw new RuntimeException("User doesn't exist. Can't create account.");
+        }
         Account checkAccount = accountRepository.findByIBANEquals(request.getIban());
         if (checkAccount != null) {
             throw new RuntimeException("Account with this IBAN already exists, IBAN should be unique");
@@ -50,7 +59,7 @@ public class AccountServiceImpl {
         accountRepository.save(account);
     }
 
-    public List<Account> getAccounts(GetAccountRequest request) {
+    public GetAccountResponse getAccounts(GetAccountRequest request) {
         log.info("AccountService getting account");
         log.info("UserName is: " + request.getUserName());
         User checkUser = userRepository.findByuserNameEquals(request.getUserName());
@@ -58,13 +67,17 @@ public class AccountServiceImpl {
             throw new RuntimeException("User does not exist");
         }
         List<Account> accounts = accountRepository.findByuserNameEquals(request.getUserName());
-        return accounts;
+        String message = "List of accounts that belongs to user: " + request.getUserName();
+        return new GetAccountResponse(accounts, message);
     }
 
     public TransactionResponse handleTransaction(TransactionRequest request) {
         log.info("AccountService handling transcation");
         Account fromAccount = accountRepository.findByIBANEquals(request.getFromIBAN());
         Account toAccount = accountRepository.findByIBANEquals(request.getToIBAN());
+        if (fromAccount == null) {
+            throw new RuntimeException("Account doesn't exist");
+        }
         if (toAccount == null) {
             throw new RuntimeException("Destination account doesn't exist");
         }

@@ -1,5 +1,6 @@
 package com.eBankingPortal.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
@@ -11,7 +12,8 @@ import com.eBankingPortal.repository.UserRepository;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl {
-    private final UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
     public void createUser(UserCreateRequest userCreateRequest) {
         User user = new User();
